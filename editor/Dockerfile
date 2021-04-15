@@ -1,5 +1,5 @@
-ARG hubImage="unityci/hub"
-ARG baseImage="unityci/base"
+ARG hubImage="gaeelbradshaw/hub"
+ARG baseImage="gaeelbradshaw/base"
 
 ###########################
 #         Builder         #

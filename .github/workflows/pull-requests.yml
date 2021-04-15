@@ -22,7 +22,7 @@ jobs:
           - 0.1
         include:
           - imageType: editor
-            editorVersion: 2020.1.4f1
+            editorVersion: 2019.3.15f1
             targetPlatform: android
     steps:
       - name: Checkout

@@ -94,30 +94,30 @@ jobs:
       fail-fast: false
       matrix:
         # The latest patch versions for each minor version.
-        version: ${{ fromJson(needs.base-and-hub.outputs.versions) }}
+        version: ${{ fromJson('["2019.3.15f1"]') }}
         module:
           - base
-          - linux-il2cpp
-          - windows-mono
-          - mac-mono
-          - ios
+          # - linux-il2cpp
+          # - windows-mono
+          # - mac-mono
+          # - ios
           - android
-          - webgl
+          # - webgl
         include:
           - module: base
             platform: StandaloneLinux64
-          - module: linux-il2cpp
-            platform: StandaloneLinux64
-          - module: windows-mono
-            platform: StandaloneWindows
-          - module: mac-mono
-            platform: StandaloneOSX
-          - module: ios
-            platform: iOS
+          # - module: linux-il2cpp
+          #   platform: StandaloneLinux64
+          # - module: windows-mono
+          #   platform: StandaloneWindows
+          # - module: mac-mono
+          #   platform: StandaloneOSX
+          # - module: ios
+          #   platform: iOS
           - module: android
             platform: Android
-          - module: webgl
-            platform: WebGL
+          # - module: webgl
+          #   platform: WebGL
         exclude: ${{ fromJson(needs.base-and-hub.outputs.excludes) }}
 
     steps:
