@@ -1,7 +1,7 @@
 name: PR 😎
 
 on:
-  pull_request: {}
+  pull_request_target: {}
 
 jobs:
   reportingTest:
@@ -22,55 +22,11 @@ jobs:
           - 0.1
         include:
           - imageType: editor
-            editorVersion: 2020.1.4f1
+            editorVersion: 2019.3.15f1
             targetPlatform: android
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Report new build
-        uses: ./.github/workflows/actions/report-to-backend
-        with:
-          token: ${{ secrets.VERSIONING_TOKEN }}
-          jobId: ${{ matrix.jobId }}
-          status: started
-          # Build info
-          imageType: ${{ matrix.imageType }}
-          baseOs: ${{ matrix.baseOs }}
-          repoVersion: ${{ matrix.repoVersion }}
-          editorVersion: ${{ matrix.editorVersion }}
-          targetPlatform: ${{ matrix.targetPlatform }}
-      - name: Report build failure
-        uses: ./.github/workflows/actions/report-to-backend
-        with:
-          token: ${{ secrets.VERSIONING_TOKEN }}
-          jobId: ${{ matrix.jobId }}
-          status: failed
-          # Build info
-          imageType: ${{ matrix.imageType }}
-          baseOs: ${{ matrix.baseOs }}
-          repoVersion: ${{ matrix.repoVersion }}
-          editorVersion: ${{ matrix.editorVersion }}
-          targetPlatform: ${{ matrix.targetPlatform }}
-          # Failed specific
-          reason: 'no real reason'
-      - name: Report publication
-        uses: ./.github/workflows/actions/report-to-backend
-        with:
-          token: ${{ secrets.VERSIONING_TOKEN }}
-          jobId: ${{ matrix.jobId }}
-          status: published
-          # Build info
-          imageType: ${{ matrix.imageType }}
-          baseOs: ${{ matrix.baseOs }}
-          repoVersion: ${{ matrix.repoVersion }}
-          editorVersion: ${{ matrix.editorVersion }}
-          targetPlatform: ${{ matrix.targetPlatform }}
-          # Published specific
-          imageRepo: unityci
-          imageName: ${{ matrix.imageType }}
-          friendlyTag: ${{ matrix.editorVersion }}-${{ matrix.targetPlatform }}-${{ matrix.repoVersion }}
-          specificTag: ${{ matrix.baseOs }}-${{ matrix.editorVersion }}-${{ matrix.targetPlatform }}-${{ matrix.repoVersion }}
-          digest: sha256:ef872b67450a680fbeebe1b037190b8f8fbfb04088531f422873915520e26e0f;
 
   build:
     name: "🧪 Test build (${{ matrix.targetPlatform }})"
@@ -89,24 +45,24 @@ jobs:
 
           # Linux Build Support
           # - linux-mono # May not exist in newer versions / May be default for Ubuntu
-          - linux-il2cpp # May not exist in older versions
+          # - linux-il2cpp # May not exist in older versions
 
           # Windows Build Support
-          - windows-mono
+          # - windows-mono
           # - windows-il2cpp # May not exist for ubuntu
 
           # MacOS Build Support
-          - mac-mono
+          # - mac-mono
           # - mac-il2cpp # May not exist for ubuntu
 
           # iOS Build Support
-          - ios
+          # - ios
 
           # Android Build Support
           - android
 
           # WebGL Build support
-          - webgl
+          # - webgl
 
           # Non-priorities: (but able to support)
           #  - vuforia-ar # Vuforia Augmented Reality Support
@@ -133,7 +89,7 @@ jobs:
         with:
           driver-opts: network=host
       - name: Cache Docker layers
-        uses: actions/cache@v2
+        uses: actions/cache@v2.1.4
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-pr-${{ matrix.targetPlatform }}-${{ github.sha }}
@@ -160,10 +116,10 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
           push: true
-          tags: localhost:5000/unityci/base:latest
+          tags: localhost:5000/gaeelbradshaw/base:latest
       - name: Inspect
         run: |
-          docker buildx imagetools inspect localhost:5000/unityci/base:latest
+          docker buildx imagetools inspect localhost:5000/gaeelbradshaw/base:latest
 
       ###########################
       #        Hub image        #
@@ -175,14 +131,14 @@ jobs:
           context: .
           file: ./hub/Dockerfile
           build-args: |
-            baseImage=localhost:5000/unityci/base:latest
+            baseImage=localhost:5000/gaeelbradshaw/base:latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
           push: true
-          tags: localhost:5000/unityci/hub:latest
+          tags: localhost:5000/gaeelbradshaw/hub:latest
       - name: Inspect
         run: |
-          docker buildx imagetools inspect localhost:5000/unityci/hub:latest
+          docker buildx imagetools inspect localhost:5000/gaeelbradshaw/hub:latest
 
       ###########################
       #       Editor image      #
@@ -194,18 +150,18 @@ jobs:
           context: .
           file: ./editor/Dockerfile
           build-args: |
-            hubImage=localhost:5000/unityci/hub:latest
-            baseImage=localhost:5000/unityci/base:latest
+            hubImage=localhost:5000/gaeelbradshaw/hub:latest
+            baseImage=localhost:5000/gaeelbradshaw/base:latest
             version=2020.1.4f1
             changeSet=fa717bb873ec
             module=${{ matrix.targetPlatform }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
           push: true
-          tags: localhost:5000/unityci/editor:latest
+          tags: localhost:5000/gaeelbradshaw/editor:latest
       - name: Inspect
         run: |
-          docker buildx imagetools inspect localhost:5000/unityci/editor:latest
+          docker buildx imagetools inspect localhost:5000/gaeelbradshaw/editor:latest
 
       ###########################
       #         Metrics         #

@@ -38,7 +38,7 @@ inputs:
 
   # Published
   imageRepo:
-    description: 'The name of the host of the docker repository (i.e. `unityci`)'
+    description: 'The name of the host of the docker repository (i.e. `gaeelbradshaw`)'
     required: false
   imageName:
     description: 'The name of the image (i.e. `hub`)'

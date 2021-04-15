@@ -1,7 +1,6 @@
 name: Docs 📚
 
 on:
-  pull_request: {}
   push: { branches: [main] }
 
 jobs:
@@ -24,7 +23,7 @@ jobs:
         uses: peter-evans/dockerhub-description@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_LEGACY_PASSWORD }}
-          repository: unityci/${{ matrix.imageType }}
+          # password: ${{ secrets.DOCKERHUB_LEGACY_PASSWORD }}
+          repository: gaeelbradshaw/${{ matrix.imageType }}
           short-description: ${{ env.SHORT_DESCRIPTION }}
           readme-filepath: ./${{ matrix.imageType }}/README.md

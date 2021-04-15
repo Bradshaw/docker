@@ -1,4 +1,4 @@
-ARG baseImage="unityci/base"
+ARG baseImage="gaeelbradshaw/base"
 FROM $baseImage
 
 # Hub dependencies
