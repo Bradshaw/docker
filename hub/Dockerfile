@@ -1,6 +1,12 @@
 ARG baseImage="gaeelbradshaw/base"
 FROM $baseImage
 
+ARG UNAME=runner
+ARG UID=1000
+ARG GID=1000
+
+RUN getent group $GID || groupadd -g $GID $UNAME
+
 # Hub dependencies
 RUN apt-get -q update \
  && apt-get -q install -y --no-install-recommends --allow-downgrades zenity \
@@ -28,3 +34,5 @@ RUN mkdir -p "/root/.config/Unity Hub" \
 RUN mkdir -p "${UNITY_PATH}/editors" \
  && unity-hub install-path --set "${UNITY_PATH}/editors/" \
  && find /tmp -mindepth 1 -delete
+
+USER $UID:$GID
