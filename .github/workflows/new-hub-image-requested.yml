@@ -38,17 +38,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Check if image not already exists
-        run: |
-          # Source: https://stackoverflow.com/a/39731444/3593896
-          function docker_tag_exists() {
-            curl --silent -f -lSL https://index.docker.io/v1/repositories/$1/tags/$2 > /dev/null
-          }
-
-          if docker_tag_exists gaeelbradshaw/hub ubuntu-${{ github.event.client_payload.repoVersionFull }} ; then
-            echo "Image already exists. Exiting."
-            exit 1
-          fi
       - name: Cache Docker layers
         uses: actions/cache@v2.1.4
         with:
