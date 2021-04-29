@@ -26,7 +26,7 @@ RUN wget --no-verbose -O /tmp/UnityHub.AppImage "https://public-cdn.cloud.unity3
 RUN echo '#!/bin/bash\nxvfb-run -ae /dev/stdout /opt/unity/UnityHub --no-sandbox --headless "$@"' > /usr/bin/unity-hub \
  && chmod +x /usr/bin/unity-hub
 
-# Accept
+# Accept as root
 RUN mkdir -p "/root/.config/Unity Hub" \
  && touch "/root/.config/Unity Hub/eulaAccepted"
 
@@ -35,4 +35,14 @@ RUN mkdir -p "${UNITY_PATH}/editors" \
  && unity-hub install-path --set "${UNITY_PATH}/editors/" \
  && find /tmp -mindepth 1 -delete
 
+RUN chown $UID:$GID -R /opt/unity/
+
+RUN bash -c 'mkdir -p /github/{home,workflow,workspace}' && chown $UID:$GID -R /github/
+RUN getent group $GID || groupadd -g $GID $UNAME
+RUN id -u $UID &>/dev/null || useradd -m -u $UID -g $GID -s /bin/bash -d /github/home $UNAME
+
 USER $UID:$GID
+
+# Accept as runner
+RUN mkdir -p "/github/home/.config/Unity Hub" \
+ && touch "/github/home/.config/Unity Hub/eulaAccepted"
