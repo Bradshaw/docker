@@ -45,24 +45,24 @@ jobs:
 
           # Linux Build Support
           # - linux-mono # May not exist in newer versions / May be default for Ubuntu
-          # - linux-il2cpp # May not exist in older versions
+          - linux-il2cpp # May not exist in older versions
 
           # Windows Build Support
-          # - windows-mono
+          - windows-mono
           # - windows-il2cpp # May not exist for ubuntu
 
           # MacOS Build Support
-          # - mac-mono
+          - mac-mono
           # - mac-il2cpp # May not exist for ubuntu
 
           # iOS Build Support
-          # - ios
+          - ios
 
           # Android Build Support
           - android
 
           # WebGL Build support
-          # - webgl
+          - webgl
 
           # Non-priorities: (but able to support)
           #  - vuforia-ar # Vuforia Augmented Reality Support
