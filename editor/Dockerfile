@@ -1,5 +1,5 @@
-ARG hubImage="gaeelbradshaw/hub"
-ARG baseImage="gaeelbradshaw/base"
+ARG hubImage="unityci/hub"
+ARG baseImage="unityci/base"
 
 ###########################
 #         Builder         #
@@ -26,10 +26,13 @@ RUN if [ "$module" = "base" ] ; then \
 
 FROM $baseImage
 
+# From now on, run as UNAME
+USER $UID:$GID
+
 # Always put "Editor" and "modules.json" directly in $UNITY_PATH
 ARG version
 ARG module
-COPY --from=builder /opt/unity/editors/$version/ "$UNITY_PATH/"
+COPY --from=builder $UNITY_PATH/editors/$version/ "$UNITY_PATH/"
 
 # Add a file containing the version for this build
 RUN echo $version > "$UNITY_PATH/version"

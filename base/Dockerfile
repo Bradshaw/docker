@@ -1,5 +1,31 @@
 FROM ubuntu:18.04
 
+# Runner user parameters
+ARG UNAME=runner
+ARG UID=1000
+ARG GID=1000
+
+# Used by Unity editor in "modules.json" and must not end with a slash.
+ENV RUNNER_HOME="/home/$UNAME"
+# Changed from /opt/unity
+ENV UNITY_PATH="$RUNNER_HOME/unity_resources"
+ENV APPDIR="$RUNNER_HOME/unity"
+
+RUN echo $APPDIR
+
+# Create the runner user
+RUN getent group $GID || groupadd -g $GID $UNAME
+RUN id -u $UID &>/dev/null || useradd -m -u $UID -g $GID -s /bin/bash -d $RUNNER_HOME $UNAME
+
+
+# Creating the folders that we'll need in hub and editor,
+RUN mkdir -p $RUNNER_HOME/bin
+ENV PATH=$PATH:$RUNNER_HOME/bin
+RUN chown $UID:$GID $RUNNER_HOME
+
+RUN touch /etc/environment \
+ && echo PATH=$PATH:$RUNNER_HOME/bin >> /etc/environment
+
 # Global dependencies
 RUN apt-get -q update \
  && apt-get -q install -y --no-install-recommends apt-utils \
@@ -33,13 +59,10 @@ RUN apt-get -q update \
  && apt-get clean
 
 # Disable default sound card, which removes ALSA warnings
-# ADD config/asound.conf /etc/
+ADD config/asound.conf /etc/
 
 # Support forward compatibility for unity activation
 RUN echo "576562626572264761624c65526f7578" > /etc/machine-id && mkdir -p /var/lib/dbus/ && ln -sf /etc/machine-id /var/lib/dbus/machine-id
-
-# Used by Unity editor in "modules.json" and must not end with a slash.
-ENV UNITY_PATH="/opt/unity"
 
 # Fixes a Gradle crash while building for Android on Unity 2019 when there are accented characters in environment variables
 ENV LANG C.UTF-8
